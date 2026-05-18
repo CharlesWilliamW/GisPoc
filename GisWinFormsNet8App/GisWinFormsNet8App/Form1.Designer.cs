@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             gMapControl1 = new GMap.NET.WindowsForms.GMapControl();
+            chkShowData = new CheckBox();
             SuspendLayout();
             // 
             // gMapControl1
@@ -58,19 +59,32 @@
             gMapControl1.TabIndex = 0;
             gMapControl1.Zoom = 0D;
             // 
+            // chkShowData
+            // 
+            chkShowData.AutoSize = true;
+            chkShowData.Location = new Point(1, 0);
+            chkShowData.Name = "chkShowData";
+            chkShowData.Size = new Size(162, 27);
+            chkShowData.TabIndex = 1;
+            chkShowData.Text = "顯示災害觀測點";
+            chkShowData.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(11F, 23F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(chkShowData);
             Controls.Add(gMapControl1);
             Name = "Form1";
             Text = "Form1";
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
 
         private GMap.NET.WindowsForms.GMapControl gMapControl1;
+        private CheckBox chkShowData;
     }
 }
