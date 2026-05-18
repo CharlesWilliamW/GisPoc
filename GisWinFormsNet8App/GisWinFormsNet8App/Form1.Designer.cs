@@ -35,11 +35,12 @@
             // 
             gMapControl1.Bearing = 0F;
             gMapControl1.CanDragMap = true;
+            gMapControl1.Dock = DockStyle.Fill;
             gMapControl1.EmptyTileColor = Color.Navy;
             gMapControl1.GrayScaleMode = false;
             gMapControl1.HelperLineOption = GMap.NET.WindowsForms.HelperLineOptions.DontShow;
             gMapControl1.LevelsKeepInMemory = 5;
-            gMapControl1.Location = new Point(12, 12);
+            gMapControl1.Location = new Point(0, 0);
             gMapControl1.MarkersEnabled = true;
             gMapControl1.MaxZoom = 2;
             gMapControl1.MinZoom = 2;
@@ -53,7 +54,7 @@
             gMapControl1.ScaleMode = GMap.NET.WindowsForms.ScaleModes.Integer;
             gMapControl1.SelectedAreaFillColor = Color.FromArgb(33, 65, 105, 225);
             gMapControl1.ShowTileGridLines = false;
-            gMapControl1.Size = new Size(225, 225);
+            gMapControl1.Size = new Size(800, 450);
             gMapControl1.TabIndex = 0;
             gMapControl1.Zoom = 0D;
             // 
