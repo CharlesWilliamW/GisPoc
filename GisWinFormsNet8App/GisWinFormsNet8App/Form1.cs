@@ -25,23 +25,30 @@ namespace GisWinFormsNet8App
         // 1. 初學者第一步：初始化免費圖資
         private void InitializeGisMap()
         {
-            // 設定地圖來源為完全免費、不需密鑰的 OpenStreetMap，避開 Mapbox 費用問題
-            gMapControl1.MapProvider = OpenStreetMapProvider.Instance;
+            try
+            {
+                // 使用 WikiMapia 開源圖資
+                gMapControl1.MapProvider = GMapProviders.WikiMapiaMap;
 
-            // 設定初始畫面定位在台灣台北市 (經緯度座標)
-            gMapControl1.Position = new PointLatLng(25.0330, 121.5654);
+                // 設定初始畫面定位在台灣台北市 (經緯度座標)
+                gMapControl1.Position = new PointLatLng(25.0330, 121.5654);
 
-            // 設定縮放級別 (Zoom)，數字越大看越細
-            gMapControl1.MinZoom = 5;
-            gMapControl1.MaxZoom = 18;
-            gMapControl1.Zoom = 13;
+                // 設定縮放級別 (Zoom)，數字越大看越細
+                gMapControl1.MinZoom = 5;
+                gMapControl1.MaxZoom = 18;
+                gMapControl1.Zoom = 13;
 
-            // 實作 GIS 必備互動：允許使用者按住滑鼠「左鍵」來拖曳平移地圖
-            gMapControl1.DragButton = MouseButtons.Left;
+                // 實作 GIS 必備互動：允許使用者按住滑鼠「左鍵」來拖曳平移地圖
+                gMapControl1.DragButton = MouseButtons.Left;
 
-            // 在 GIS 系統中，所有點、線、面都必須放在「圖層 (Overlay)」上，再把圖層加進地圖
-            _markerOverlay = new GMapOverlay("disaster_layer");
-            gMapControl1.Overlays.Add(_markerOverlay);
+                // 在 GIS 系統中，所有點、線、面都必須放在「圖層 (Overlay)」上，再把圖層加進地圖
+                _markerOverlay = new GMapOverlay("disaster_layer");
+                gMapControl1.Overlays.Add(_markerOverlay);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"地圖引擎初始化失敗: {ex.Message}");
+            }
         }
 
         // 2. 業主的核心功能：按下按鈕後判斷勾選狀態、呼叫 API、地圖呈現
