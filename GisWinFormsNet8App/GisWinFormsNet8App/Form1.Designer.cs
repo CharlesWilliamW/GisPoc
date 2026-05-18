@@ -30,6 +30,7 @@
         {
             gMapControl1 = new GMap.NET.WindowsForms.GMapControl();
             chkShowData = new CheckBox();
+            btnRefresh = new Button();
             SuspendLayout();
             // 
             // gMapControl1
@@ -62,18 +63,29 @@
             // chkShowData
             // 
             chkShowData.AutoSize = true;
-            chkShowData.Location = new Point(1, 0);
+            chkShowData.Location = new Point(12, 12);
             chkShowData.Name = "chkShowData";
             chkShowData.Size = new Size(162, 27);
             chkShowData.TabIndex = 1;
             chkShowData.Text = "顯示災害觀測點";
             chkShowData.UseVisualStyleBackColor = true;
             // 
+            // btnRefresh
+            // 
+            btnRefresh.Location = new Point(12, 45);
+            btnRefresh.Name = "btnRefresh";
+            btnRefresh.Size = new Size(162, 34);
+            btnRefresh.TabIndex = 2;
+            btnRefresh.Text = "重新整理數據";
+            btnRefresh.UseVisualStyleBackColor = true;
+            btnRefresh.Click += btnRefresh_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(11F, 23F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(btnRefresh);
             Controls.Add(chkShowData);
             Controls.Add(gMapControl1);
             Name = "Form1";
@@ -86,5 +98,6 @@
 
         private GMap.NET.WindowsForms.GMapControl gMapControl1;
         private CheckBox chkShowData;
+        private Button btnRefresh;
     }
 }
