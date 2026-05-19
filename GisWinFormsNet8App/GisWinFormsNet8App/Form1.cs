@@ -27,7 +27,7 @@ namespace GisWinFormsNet8App
             // 初始化服務，並把地圖控制項傳進去
             _measurementService = new MapMeasurementService(gMapControl1);
 
-            // 【關鍵點】：直接用程式碼綁定 MouseClick 事件，解決你在設計畫面找不到閃電圖示的問題！
+            // 程式碼綁定 MouseClick 事件
             gMapControl1.MouseClick += GMapControl1_MouseClick;
         }
 
@@ -65,7 +65,13 @@ namespace GisWinFormsNet8App
         /// </summary>
         private void GMapControl1_MouseClick(object sender, MouseEventArgs e)
         {
-            _measurementService.HandleMapClick(e);
+            if (chkMeasureMode != null && chkMeasureMode.Checked && e.Button == MouseButtons.Left)
+            {
+                // 將畫面上的像素座標 (X, Y) 轉換為地理經緯度 (Lat, Lng)
+                PointLatLng clickedPoint = gMapControl1.FromLocalToLatLng(e.X, e.Y);
+
+                string resultMessage = _measurementService.HandleMapClick(clickedPoint);
+            }
         }
 
         // 2. 業主的核心功能：按下按鈕後判斷勾選狀態、呼叫 API、地圖呈現

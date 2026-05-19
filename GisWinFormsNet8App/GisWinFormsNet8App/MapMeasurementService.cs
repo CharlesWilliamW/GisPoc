@@ -29,6 +29,7 @@ namespace GisWinFormsNet8App
         /// </summary>
         private void InitializeOverlay()
         {
+            // 建立專屬的量測圖層，避免污染其他業務圖層
             _measureOverlay = new GMapOverlay("measure_overlay");
             _mapControl.Overlays.Add(_measureOverlay);
         }
@@ -36,14 +37,8 @@ namespace GisWinFormsNet8App
         /// <summary>
         /// 處理地圖點擊量測邏輯
         /// </summary>
-        public void HandleMapClick(MouseEventArgs e)
+        public string HandleMapClick(PointLatLng clickedPoint)
         {
-            // 只處理滑鼠左鍵點擊
-            if (e.Button != MouseButtons.Left) return;
-
-            // 將畫面上的像素座標 (X, Y) 轉換為地理經緯度 (Lat, Lng)
-            PointLatLng clickedPoint = _mapControl.FromLocalToLatLng(e.X, e.Y);
-
             if (_startPoint == null)
             {
                 // 【第一點點擊】：設定起點
@@ -57,13 +52,15 @@ namespace GisWinFormsNet8App
                     ToolTipMode = MarkerTooltipMode.Always
                 };
                 _measureOverlay.Markers.Add(_startMarker);
+
+                return "距離：請點擊第二點...";
             }
             else
             {
                 // 【第二點點擊】：設定終點，計算距離並連線
                 PointLatLng endPoint = clickedPoint;
 
-                // 插上紅色終點大頭針
+                // 插上藍色終點大頭針
                 _endMarker = new GMarkerGoogle(endPoint, GMarkerGoogleType.blue);
                 _measureOverlay.Markers.Add(_endMarker);
 
@@ -87,10 +84,11 @@ namespace GisWinFormsNet8App
 
                 // 重設狀態，讓使用者下一次點擊可以重新測量
                 _startPoint = null;
-            }
 
-            // 強制地圖刷新渲染
-            _mapControl.Refresh();
+                // 強制地圖刷新渲染
+                _mapControl.Refresh();
+                return $"距離：{distanceKm:F2} 公里";
+            }
         }
 
         /// <summary>
@@ -113,11 +111,11 @@ namespace GisWinFormsNet8App
             double R = 6371.0; // 地球平均半徑 (公里)
 
             // 轉弧度 (Radians)
-            double lat1Rad = Math.PI * pos1.Lat / 180.0;
-            double lat2Rad = Math.PI * pos2.Lat / 180.0;
+            double lat1Rad = ToRadians(pos1.Lat);
+            double lat2Rad = ToRadians(pos2.Lat);
 
-            double deltaLat = Math.PI * (pos2.Lat - pos1.Lat) / 180.0;
-            double deltaLng = Math.PI * (pos2.Lng - pos1.Lng) / 180.0;
+            double deltaLat = ToRadians(pos2.Lat - pos1.Lat);
+            double deltaLng = ToRadians(pos2.Lng - pos1.Lng);
 
             // Haversine 公式
             double a = Math.Sin(deltaLat / 2) * Math.Sin(deltaLat / 2) +
@@ -127,6 +125,11 @@ namespace GisWinFormsNet8App
             double c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
 
             return R * c; // 回傳公里
+        }
+
+        private double ToRadians(double val)
+        {
+            return (Math.PI / 180) * val;
         }
     }
 }
