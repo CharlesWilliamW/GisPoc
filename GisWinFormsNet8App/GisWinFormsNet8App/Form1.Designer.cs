@@ -31,6 +31,8 @@
             gMapControl1 = new GMap.NET.WindowsForms.GMapControl();
             chkShowData = new CheckBox();
             btnRefresh = new Button();
+            chkMeasureMode = new CheckBox();
+            btnClearMeasure = new Button();
             SuspendLayout();
             // 
             // gMapControl1
@@ -43,6 +45,7 @@
             gMapControl1.HelperLineOption = GMap.NET.WindowsForms.HelperLineOptions.DontShow;
             gMapControl1.LevelsKeepInMemory = 5;
             gMapControl1.Location = new Point(0, 0);
+            gMapControl1.Margin = new Padding(2);
             gMapControl1.MarkersEnabled = true;
             gMapControl1.MaxZoom = 2;
             gMapControl1.MinZoom = 2;
@@ -56,38 +59,65 @@
             gMapControl1.ScaleMode = GMap.NET.WindowsForms.ScaleModes.Integer;
             gMapControl1.SelectedAreaFillColor = Color.FromArgb(33, 65, 105, 225);
             gMapControl1.ShowTileGridLines = false;
-            gMapControl1.Size = new Size(800, 450);
+            gMapControl1.Size = new Size(509, 293);
             gMapControl1.TabIndex = 0;
             gMapControl1.Zoom = 0D;
             // 
             // chkShowData
             // 
             chkShowData.AutoSize = true;
-            chkShowData.Location = new Point(12, 12);
+            chkShowData.Location = new Point(8, 8);
+            chkShowData.Margin = new Padding(2);
             chkShowData.Name = "chkShowData";
-            chkShowData.Size = new Size(162, 27);
+            chkShowData.Size = new Size(110, 19);
             chkShowData.TabIndex = 1;
             chkShowData.Text = "顯示災害觀測點";
             chkShowData.UseVisualStyleBackColor = true;
             // 
             // btnRefresh
             // 
-            btnRefresh.Location = new Point(12, 45);
+            btnRefresh.Location = new Point(8, 29);
+            btnRefresh.Margin = new Padding(2);
             btnRefresh.Name = "btnRefresh";
-            btnRefresh.Size = new Size(162, 34);
+            btnRefresh.Size = new Size(103, 22);
             btnRefresh.TabIndex = 2;
             btnRefresh.Text = "重新整理數據";
             btnRefresh.UseVisualStyleBackColor = true;
             btnRefresh.Click += btnRefresh_Click;
             // 
+            // chkMeasureMode
+            // 
+            chkMeasureMode.AutoSize = true;
+            chkMeasureMode.Location = new Point(8, 70);
+            chkMeasureMode.Margin = new Padding(2);
+            chkMeasureMode.Name = "chkMeasureMode";
+            chkMeasureMode.Size = new Size(157, 19);
+            chkMeasureMode.TabIndex = 3;
+            chkMeasureMode.Text = "開啟測距模式 (點擊兩點)";
+            chkMeasureMode.UseVisualStyleBackColor = true;
+            // 
+            // btnClearMeasure
+            // 
+            btnClearMeasure.Location = new Point(8, 93);
+            btnClearMeasure.Margin = new Padding(2);
+            btnClearMeasure.Name = "btnClearMeasure";
+            btnClearMeasure.Size = new Size(103, 22);
+            btnClearMeasure.TabIndex = 5;
+            btnClearMeasure.Text = "清除距離量測";
+            btnClearMeasure.UseVisualStyleBackColor = true;
+            btnClearMeasure.Click += btnClearMeasure_Click;
+            // 
             // Form1
             // 
-            AutoScaleDimensions = new SizeF(11F, 23F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(509, 293);
+            Controls.Add(btnClearMeasure);
+            Controls.Add(chkMeasureMode);
             Controls.Add(btnRefresh);
             Controls.Add(chkShowData);
             Controls.Add(gMapControl1);
+            Margin = new Padding(2);
             Name = "Form1";
             Text = "Form1";
             ResumeLayout(false);
@@ -99,5 +129,7 @@
         private GMap.NET.WindowsForms.GMapControl gMapControl1;
         private CheckBox chkShowData;
         private Button btnRefresh;
+        private CheckBox chkMeasureMode;
+        private Button btnClearMeasure;
     }
 }

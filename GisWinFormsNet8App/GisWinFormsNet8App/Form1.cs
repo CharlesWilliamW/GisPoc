@@ -16,10 +16,19 @@ namespace GisWinFormsNet8App
         private GMapOverlay _markerOverlay;
         private readonly HttpClient _httpClient = new HttpClient();
 
+        // 宣告我們抽離出來的量測服務
+        private MapMeasurementService _measurementService;
+
         public Form1()
         {
             InitializeComponent();
             InitializeGisMap();
+
+            // 初始化服務，並把地圖控制項傳進去
+            _measurementService = new MapMeasurementService(gMapControl1);
+
+            // 【關鍵點】：直接用程式碼綁定 MouseClick 事件，解決你在設計畫面找不到閃電圖示的問題！
+            gMapControl1.MouseClick += GMapControl1_MouseClick;
         }
 
         // 1. 初學者第一步：初始化免費圖資
@@ -49,6 +58,14 @@ namespace GisWinFormsNet8App
             {
                 MessageBox.Show($"地圖引擎初始化失敗: {ex.Message}");
             }
+        }
+
+        /// <summary>
+        /// 當地圖被點擊時，直接外包給 Service 處理
+        /// </summary>
+        private void GMapControl1_MouseClick(object sender, MouseEventArgs e)
+        {
+            _measurementService.HandleMapClick(e);
         }
 
         // 2. 業主的核心功能：按下按鈕後判斷勾選狀態、呼叫 API、地圖呈現
@@ -134,6 +151,11 @@ namespace GisWinFormsNet8App
             {
                 throw new Exception("外部圖資伺服器連線逾時");
             }
+        }
+
+        private void btnClearMeasure_Click(object sender, EventArgs e)
+        {
+            _measurementService.ClearMeasurement();
         }
     }
 
