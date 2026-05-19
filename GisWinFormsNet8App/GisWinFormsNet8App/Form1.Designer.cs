@@ -29,8 +29,7 @@
         private void InitializeComponent()
         {
             gMapControl1 = new GMap.NET.WindowsForms.GMapControl();
-            chkShowData = new CheckBox();
-            btnRefresh = new Button();
+            btnToggleDisaster = new CheckBox();
             chkMeasureMode = new CheckBox();
             btnClearMeasure = new Button();
             SuspendLayout();
@@ -63,27 +62,18 @@
             gMapControl1.TabIndex = 0;
             gMapControl1.Zoom = 0D;
             // 
-            // chkShowData
+            // btnToggleDisaster
             // 
-            chkShowData.AutoSize = true;
-            chkShowData.Location = new Point(8, 8);
-            chkShowData.Margin = new Padding(2);
-            chkShowData.Name = "chkShowData";
-            chkShowData.Size = new Size(110, 19);
-            chkShowData.TabIndex = 1;
-            chkShowData.Text = "顯示災害觀測點";
-            chkShowData.UseVisualStyleBackColor = true;
-            // 
-            // btnRefresh
-            // 
-            btnRefresh.Location = new Point(8, 29);
-            btnRefresh.Margin = new Padding(2);
-            btnRefresh.Name = "btnRefresh";
-            btnRefresh.Size = new Size(103, 22);
-            btnRefresh.TabIndex = 2;
-            btnRefresh.Text = "重新整理數據";
-            btnRefresh.UseVisualStyleBackColor = true;
-            btnRefresh.Click += btnRefresh_Click;
+            btnToggleDisaster.Appearance = Appearance.Button;
+            btnToggleDisaster.AutoSize = true;
+            btnToggleDisaster.Location = new Point(8, 8);
+            btnToggleDisaster.Margin = new Padding(2);
+            btnToggleDisaster.Name = "btnToggleDisaster";
+            btnToggleDisaster.Size = new Size(101, 25);
+            btnToggleDisaster.TabIndex = 1;
+            btnToggleDisaster.Text = "顯示災害觀測點";
+            btnToggleDisaster.UseVisualStyleBackColor = true;
+            btnToggleDisaster.CheckedChanged += btnToggleDisaster_CheckedChanged;
             // 
             // chkMeasureMode
             // 
@@ -114,8 +104,7 @@
             ClientSize = new Size(509, 293);
             Controls.Add(btnClearMeasure);
             Controls.Add(chkMeasureMode);
-            Controls.Add(btnRefresh);
-            Controls.Add(chkShowData);
+            Controls.Add(btnToggleDisaster);
             Controls.Add(gMapControl1);
             Margin = new Padding(2);
             Name = "Form1";
@@ -127,8 +116,7 @@
         #endregion
 
         private GMap.NET.WindowsForms.GMapControl gMapControl1;
-        private CheckBox chkShowData;
-        private Button btnRefresh;
+        private CheckBox btnToggleDisaster;
         private CheckBox chkMeasureMode;
         private Button btnClearMeasure;
     }
