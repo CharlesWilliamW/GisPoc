@@ -59,7 +59,7 @@
             gMapControl1.ScaleMode = GMap.NET.WindowsForms.ScaleModes.Integer;
             gMapControl1.SelectedAreaFillColor = Color.FromArgb(33, 65, 105, 225);
             gMapControl1.ShowTileGridLines = false;
-            gMapControl1.Size = new Size(509, 293);
+            gMapControl1.Size = new Size(784, 411);
             gMapControl1.TabIndex = 0;
             gMapControl1.Zoom = 0D;
             // 
@@ -114,7 +114,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(509, 293);
+            ClientSize = new Size(784, 411);
             Controls.Add(chkBufferMode);
             Controls.Add(btnClearMeasure);
             Controls.Add(chkMeasureMode);
