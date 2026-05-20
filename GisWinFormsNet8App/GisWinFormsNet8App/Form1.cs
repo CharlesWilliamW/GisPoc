@@ -59,13 +59,34 @@ namespace GisWinFormsNet8App
         /// </summary>
         private void GMapControl1_MouseClick(object sender, MouseEventArgs e)
         {
-            if (chkMeasureMode != null && chkMeasureMode.Checked && e.Button == MouseButtons.Left)
+            if (e.Button == MouseButtons.Left)
             {
                 // 將畫面上的像素座標 (X, Y) 轉換為地理經緯度 (Lat, Lng)
                 PointLatLng clickedPoint = gMapControl1.FromLocalToLatLng(e.X, e.Y);
 
-                string resultMessage = _measurementService.HandleMapClick(clickedPoint);
+                // 情況 A：如果「測距模式」有開啟
+                if (chkMeasureMode != null && chkMeasureMode.Checked)
+                {
+                    string resultMessage = _measurementService.HandleMapClick(clickedPoint);
+                }
+
+                // 情況 B：如果「緩衝區模式」有開啟 (不論測距有無開啟，皆可單獨運作)
+                if (chkBufferMode.Checked)
+                {
+                    // 以 clickedPoint 為中心，建立一個災害緩衝圈
+                    double bufferRadiusInMeters = 500; // 緩衝區半徑
+                    _measurementService.CreateBuffer(clickedPoint, bufferRadiusInMeters);
+                }
             }
+        }
+
+        private void chkBufferMode_CheckedChanged(object sender, EventArgs e)
+        {
+            // 切換圖層可見度
+            _measurementService.SetBufferVisibility(chkBufferMode.Checked);
+
+            // 刷新地圖確保即時渲染
+            gMapControl1.Refresh();
         }
 
         // 用來追蹤 Toggle 狀態的變數（如果使用一般 Button）
@@ -101,10 +122,6 @@ namespace GisWinFormsNet8App
                 // 隱藏圖層
                 _disasterManager.ToggleVisibility(false);
             }
-        }
-
-        private async void btnRefresh_Click(object sender, EventArgs e)
-        {
         }
 
         private void btnClearMeasure_Click(object sender, EventArgs e)
