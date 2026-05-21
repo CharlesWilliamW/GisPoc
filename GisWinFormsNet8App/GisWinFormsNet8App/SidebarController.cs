@@ -2,19 +2,11 @@ using GMap.NET.WindowsForms;
 
 namespace GisWinFormsNet8App
 {
-    /// <summary>
-    /// 管理側邊欄的 SplitContainer 佈局與收合展開狀態
-    /// </summary>
     internal class SidebarController
     {
         private SplitContainer? _splitContainer;
-        private Button? _btnToggleSidebar;
-        private int _sidebarExpandedWidth = 250;
-        private bool _sidebarCollapsed = false;
+        private readonly int _sidebarExpandedWidth = 250;
 
-        /// <summary>
-        /// 建立 SplitContainer、將 Designer 元件移入側邊欄與地圖區，並設定外觀樣式
-        /// </summary>
         public void Initialize(Form form, GMapControl mapControl,
             CheckBox chkBufferMode, Button btnClearMeasure,
             CheckBox chkMeasureMode, CheckBox btnToggleDisaster)
@@ -43,21 +35,6 @@ namespace GisWinFormsNet8App
             _splitContainer.Panel1.BackColor = Color.FromArgb(45, 45, 48);
             _splitContainer.Panel1.Padding = new Padding(15, 15, 15, 0);
             _splitContainer.Panel2.BackColor = Color.White;
-
-            _btnToggleSidebar = new Button
-            {
-                Text = "◀",
-                Dock = DockStyle.Bottom,
-                Height = 30,
-                FlatStyle = FlatStyle.Flat,
-                BackColor = Color.FromArgb(63, 63, 70),
-                ForeColor = Color.White,
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                Cursor = Cursors.Hand
-            };
-            _btnToggleSidebar.FlatAppearance.BorderSize = 0;
-            _btnToggleSidebar.Click += (s, e) => ToggleSidebar();
-            _splitContainer.Panel1.Controls.Add(_btnToggleSidebar);
 
             _splitContainer.Panel1.Controls.Add(chkBufferMode);
             _splitContainer.Panel1.Controls.Add(btnClearMeasure);
@@ -90,25 +67,6 @@ namespace GisWinFormsNet8App
             mapControl.Dock = DockStyle.Fill;
 
             form.ResumeLayout(false);
-        }
-
-        private void ToggleSidebar()
-        {
-            if (_splitContainer == null || _btnToggleSidebar == null) return;
-
-            if (_sidebarCollapsed)
-            {
-                _splitContainer.SplitterDistance = _sidebarExpandedWidth;
-                _sidebarCollapsed = false;
-                _btnToggleSidebar.Text = "◀";
-            }
-            else
-            {
-                _sidebarExpandedWidth = _splitContainer.SplitterDistance;
-                _splitContainer.SplitterDistance = _splitContainer.Panel1MinSize;
-                _sidebarCollapsed = true;
-                _btnToggleSidebar.Text = "▶";
-            }
         }
     }
 }
