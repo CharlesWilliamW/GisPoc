@@ -13,6 +13,10 @@ namespace GisWinFormsNet8App
     {
         private Panel panelSidebar;
         private Panel panelMap;
+        private SplitContainer? splitContainer;
+        private Button? _btnToggleSidebar;
+        private int _sidebarExpandedWidth = 250;
+        private bool _sidebarCollapsed = false;
 
         // 宣告我們抽離出來的服務
         private readonly MapDataService _dataService;
@@ -44,74 +48,117 @@ namespace GisWinFormsNet8App
         }
 
         /// <summary>
-        /// 純代碼配置排版：建立側邊欄與地圖容器，並把設計師拉好的元件重新歸位
+        /// 純代碼配置排版：以 SplitContainer 取代固定寬度側邊欄，讓使用者可自由拖曳伸縮
         /// </summary>
         private void InitializeDynamicPanels()
         {
-            // 暫停表單佈局更新，防止重繪時閃爍
             this.SuspendLayout();
 
-            // === 建立左側工具列容器 ===
-            panelSidebar = new Panel
-            {
-                Dock = DockStyle.Left,
-                Width = 250,
-                BackColor = Color.FromArgb(45, 45, 48), // 質感深灰色
-                Padding = new Padding(15)
-            };
-
-            // === 建立右側地圖滿版容器 ===
-            panelMap = new Panel
+            // === 建立可拖曳分隔的 SplitContainer ===
+            // Panel1MinSize / Panel2MinSize / SplitterDistance 都不在此設定：
+            // 初始化時控制項寬度為 0，設這些值會觸發內部驗證 exception。
+            // 全部延到 Load 事件（form 完成 layout 後）再設定。
+            splitContainer = new SplitContainer
             {
                 Dock = DockStyle.Fill,
-                BackColor = Color.White
+                Orientation = Orientation.Vertical,
+                SplitterWidth = 5,
+                BackColor = Color.FromArgb(60, 60, 63)
+            };
+            // Shown 事件：form 完成第一次繪製後才套用
+            // Load 事件太早 → Dock=Fill 尚未執行 → Width 仍是預設 150px → exception
+            this.Shown += (s, e) =>
+            {
+                splitContainer.Panel1MinSize = 30;
+                splitContainer.Panel2MinSize = 200;
+                splitContainer.SplitterDistance = Math.Min(
+                    _sidebarExpandedWidth,
+                    splitContainer.Width - splitContainer.Panel2MinSize - splitContainer.SplitterWidth
+                );
             };
 
-            // === 重新分配元件的「爸爸（Parent）」是誰 ===
-            // 將設計師拉好的控制項，從 Form1 移籍到 panelSidebar 中
-            panelSidebar.Controls.Add(chkBufferMode);
-            panelSidebar.Controls.Add(btnClearMeasure);
-            panelSidebar.Controls.Add(chkMeasureMode);
-            panelSidebar.Controls.Add(btnToggleDisaster);
+            // === 左側工具列 ===
+            panelSidebar = splitContainer.Panel1;
+            panelSidebar.BackColor = Color.FromArgb(45, 45, 48);
+            panelSidebar.Padding = new Padding(15, 15, 15, 0);
 
-            // 將設計師拉好的地圖，從 Form1 移籍到 panelMap 中
-            panelMap.Controls.Add(gMapControl1);
+            // === 右側地圖區 ===
+            panelMap = splitContainer.Panel2;
+            panelMap.BackColor = Color.White;
 
-            // === 將新容器加回視窗主體 ===
-            // 注意：在 WinForms 中，後加入的 Dock.Fill 會填滿「剩餘」空間，順序不能錯
-            this.Controls.Add(panelMap);
-            this.Controls.Add(panelSidebar);
+            // === 收合 / 展開切換按鈕（固定在側邊欄底部，收合後仍可見）===
+            _btnToggleSidebar = new Button
+            {
+                Text = "◀",
+                Dock = DockStyle.Bottom,
+                Height = 30,
+                FlatStyle = FlatStyle.Flat,
+                BackColor = Color.FromArgb(63, 63, 70),
+                ForeColor = Color.White,
+                Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                Cursor = Cursors.Hand
+            };
+            _btnToggleSidebar.FlatAppearance.BorderSize = 0;
+            _btnToggleSidebar.Click += (s, e) => ToggleSidebar();
+            splitContainer.Panel1.Controls.Add(_btnToggleSidebar);
 
-            // === 調整 panelSidebar 內元件的排版與外觀 ===
-            // 災害點開關（讓它有寬度並整齊排列）
+            // === 將設計師元件移入側邊欄 ===
+            splitContainer.Panel1.Controls.Add(chkBufferMode);
+            splitContainer.Panel1.Controls.Add(btnClearMeasure);
+            splitContainer.Panel1.Controls.Add(chkMeasureMode);
+            splitContainer.Panel1.Controls.Add(btnToggleDisaster);
+
+            // === 將地圖移入右側 ===
+            splitContainer.Panel2.Controls.Add(gMapControl1);
+
+            this.Controls.Add(splitContainer);
+
+            // === 側邊欄內元件排版與外觀 ===
             btnToggleDisaster.Dock = DockStyle.Top;
             btnToggleDisaster.Height = 45;
             btnToggleDisaster.Font = new Font("Microsoft JhengHei", 10, FontStyle.Bold);
 
-            // 測距模式 CheckBox（加間距與調整文字顏色）
             chkMeasureMode.Dock = DockStyle.Top;
             chkMeasureMode.Height = 40;
             chkMeasureMode.ForeColor = Color.White;
             chkMeasureMode.Font = new Font("Microsoft JhengHei", 10);
             chkMeasureMode.Padding = new Padding(0, 10, 0, 0);
 
-            // 清除測距按鈕（讓它有寬度並整齊排列）
             btnClearMeasure.Dock = DockStyle.Top;
             btnClearMeasure.Height = 30;
             btnClearMeasure.Font = new Font("Microsoft JhengHei", 10, FontStyle.Bold);
 
-            // 緩衝區模式 CheckBox
             chkBufferMode.Dock = DockStyle.Top;
             chkBufferMode.Height = 40;
             chkBufferMode.ForeColor = Color.White;
             chkBufferMode.Font = new Font("Microsoft JhengHei", 10);
             chkBufferMode.Padding = new Padding(0, 10, 0, 0);
 
-            // === 調整地圖控制項屬性，使其在 panelMap 裡滿版 ===
             gMapControl1.Dock = DockStyle.Fill;
 
-            // 恢復表單佈局
             this.ResumeLayout(false);
+        }
+
+        /// <summary>
+        /// 切換側邊欄收合 / 展開
+        /// </summary>
+        private void ToggleSidebar()
+        {
+            if (splitContainer == null || _btnToggleSidebar == null) return;
+
+            if (_sidebarCollapsed)
+            {
+                splitContainer.SplitterDistance = _sidebarExpandedWidth;
+                _sidebarCollapsed = false;
+                _btnToggleSidebar.Text = "◀";
+            }
+            else
+            {
+                _sidebarExpandedWidth = splitContainer.SplitterDistance;
+                splitContainer.SplitterDistance = splitContainer.Panel1MinSize;
+                _sidebarCollapsed = true;
+                _btnToggleSidebar.Text = "▶";
+            }
         }
 
         /// <summary>
