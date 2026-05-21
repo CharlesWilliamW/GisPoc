@@ -18,5 +18,7 @@ namespace GisWinFormsNet8App.Models
 
         /// <summary>基地海拔高度，單位：公尺</summary>
         public double BaseElevation { get; set; }
+
+        public override string ToString() => Name;
     }
 }

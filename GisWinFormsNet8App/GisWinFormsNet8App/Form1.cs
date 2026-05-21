@@ -1,5 +1,6 @@
 using GMap.NET;
 using GMap.NET.MapProviders;
+using GisWinFormsNet8App.Services;
 
 namespace GisWinFormsNet8App
 {
@@ -20,7 +21,7 @@ namespace GisWinFormsNet8App
             InitializeComponent();
 
             _sidebarController = new SidebarController();
-            _sidebarController.Initialize(this, gMapControl1, chkBufferMode, btnClearMeasure, chkMeasureMode, btnToggleDisaster);
+            _sidebarController.Initialize(this, gMapControl1, chkBufferMode, btnClearMeasure, chkMeasureMode, btnToggleDisaster, new MockGeoCoordinateService());
 
             InitializeCustomGMapSettings();
 

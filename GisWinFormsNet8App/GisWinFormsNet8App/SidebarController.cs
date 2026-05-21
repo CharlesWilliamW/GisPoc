@@ -1,15 +1,18 @@
 using GMap.NET.WindowsForms;
+using GisWinFormsNet8App.Services;
 
 namespace GisWinFormsNet8App
 {
     internal class SidebarController
     {
         private SplitContainer? _splitContainer;
+        private CheckedListBox? _geoList;
         private readonly int _sidebarExpandedWidth = 250;
 
         public void Initialize(Form form, GMapControl mapControl,
             CheckBox chkBufferMode, Button btnClearMeasure,
-            CheckBox chkMeasureMode, CheckBox btnToggleDisaster)
+            CheckBox chkMeasureMode, CheckBox btnToggleDisaster,
+            IGeoCoordinateService geoService)
         {
             form.SuspendLayout();
 
@@ -39,7 +42,7 @@ namespace GisWinFormsNet8App
             _splitContainer.Panel2.Controls.Add(mapControl);
             form.Controls.Add(_splitContainer);
 
-            // 設定各控制項樣式
+            // --- 底部控制列樣式 ---
             btnToggleDisaster.Dock = DockStyle.Top;
             btnToggleDisaster.Height = 45;
             btnToggleDisaster.Font = new Font("Microsoft JhengHei", 10, FontStyle.Bold);
@@ -60,7 +63,6 @@ namespace GisWinFormsNet8App
             chkBufferMode.Font = new Font("Microsoft JhengHei", 10);
             chkBufferMode.Padding = new Padding(0, 10, 0, 0);
 
-            // 包在底部 Panel，讓所有控制項貼齊側邊欄左下角
             var controlPanel = new Panel
             {
                 Dock = DockStyle.Bottom,
@@ -68,14 +70,46 @@ namespace GisWinFormsNet8App
                 Padding = new Padding(0, 0, 0, 10),
                 BackColor = Color.Transparent
             };
-
             // Dock=Top 時，最後加入的控制項排在最上方，依序往下疊
             controlPanel.Controls.Add(chkBufferMode);
             controlPanel.Controls.Add(btnClearMeasure);
             controlPanel.Controls.Add(chkMeasureMode);
             controlPanel.Controls.Add(btnToggleDisaster);
 
-            _splitContainer.Panel1.Controls.Add(controlPanel);
+            // --- 設施清單 CheckList ---
+            var lblGeoTitle = new Label
+            {
+                Text = "設施清單",
+                Dock = DockStyle.Top,
+                Height = 28,
+                ForeColor = Color.FromArgb(180, 180, 180),
+                Font = new Font("Microsoft JhengHei", 9, FontStyle.Bold),
+                Padding = new Padding(0, 6, 0, 0)
+            };
+
+            _geoList = new CheckedListBox
+            {
+                Dock = DockStyle.Fill,
+                BackColor = Color.FromArgb(37, 37, 38),
+                ForeColor = Color.White,
+                BorderStyle = BorderStyle.None,
+                Font = new Font("Microsoft JhengHei", 9),
+                CheckOnClick = true
+            };
+
+            // 非同步載入設施清單（在視窗顯示後執行）
+            form.Shown += async (s, e) =>
+            {
+                var items = await geoService.GetCoordinatesAsync();
+                foreach (var item in items)
+                    _geoList.Items.Add(item);
+            };
+
+            // Panel1 加入順序決定 Dock 優先權：
+            //   Bottom → Fill → Top（最後加入的 Top 排最上方）
+            _splitContainer.Panel1.Controls.Add(controlPanel);  // Dock=Bottom
+            _splitContainer.Panel1.Controls.Add(_geoList);      // Dock=Fill（中間填滿）
+            _splitContainer.Panel1.Controls.Add(lblGeoTitle);   // Dock=Top（最後加入 = 最上方）
 
             mapControl.Dock = DockStyle.Fill;
 
