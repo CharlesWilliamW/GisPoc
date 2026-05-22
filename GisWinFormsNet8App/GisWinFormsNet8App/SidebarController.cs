@@ -1,4 +1,5 @@
 using GMap.NET.WindowsForms;
+using GisWinFormsNet8App.Models;
 using GisWinFormsNet8App.Services;
 
 namespace GisWinFormsNet8App
@@ -7,6 +8,7 @@ namespace GisWinFormsNet8App
     {
         private SplitContainer? _splitContainer;
         private CheckedListBox? _geoList;
+        private GeoCoordinateOverlayManager? _geoOverlay;
         private readonly int _sidebarExpandedWidth = 250;
 
         public void Initialize(Form form, GMapControl mapControl,
@@ -41,6 +43,8 @@ namespace GisWinFormsNet8App
 
             _splitContainer.Panel2.Controls.Add(mapControl);
             form.Controls.Add(_splitContainer);
+
+            _geoOverlay = new GeoCoordinateOverlayManager(mapControl);
 
             // --- 底部控制列樣式 ---
             btnToggleDisaster.Dock = DockStyle.Top;
@@ -97,12 +101,23 @@ namespace GisWinFormsNet8App
                 CheckOnClick = true
             };
 
-            // 非同步載入設施清單（在視窗顯示後執行）
+            // 非同步載入設施清單，並向 overlay manager 註冊每個點
             form.Shown += async (s, e) =>
             {
                 var items = await geoService.GetCoordinatesAsync();
                 foreach (var item in items)
+                {
                     _geoList.Items.Add(item);
+                    _geoOverlay.Register(item);
+                }
+            };
+
+            // 勾選 → 顯示地圖標記；取消勾選 → 隱藏
+            // ItemCheck 在狀態變更前觸發，使用 e.NewValue 取得即將變成的狀態
+            _geoList.ItemCheck += (s, e) =>
+            {
+                var coord = (GeoCoordinate)_geoList.Items[e.Index];
+                _geoOverlay.SetVisible(coord, e.NewValue == CheckState.Checked);
             };
 
             // Panel1 加入順序決定 Dock 優先權：
