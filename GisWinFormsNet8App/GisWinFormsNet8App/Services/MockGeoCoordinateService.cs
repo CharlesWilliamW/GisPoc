@@ -12,28 +12,30 @@ namespace GisWinFormsNet8App.Services
         {
             var data = new List<GeoCoordinate>
             {
+                // 三點皆在地圖預設中心 (25.0330, 121.5654) zoom=13 可見範圍內
+                // 參考基準：Taipei 101 ≈ E303923 / N2769867
                 new GeoCoordinate
                 {
-                    CoordinateId = "SOL-001",
-                    Name        = "太陽能設施 A",
-                    EastX       = 302158.0,
-                    NorthY      = 2768486.0,
+                    CoordinateId  = "SOL-001",
+                    Name          = "太陽能設施 A",
+                    EastX         = 303500.0,   // 中心偏西北 ~600 m
+                    NorthY        = 2770300.0,
                     BaseElevation = 45.0
                 },
                 new GeoCoordinate
                 {
-                    CoordinateId = "WIN-001",
-                    Name        = "風能設施 B",
-                    EastX       = 214880.0,
-                    NorthY      = 2672540.0,
+                    CoordinateId  = "WIN-001",
+                    Name          = "風能設施 B",
+                    EastX         = 305000.0,   // 中心偏東 ~1000 m
+                    NorthY        = 2769800.0,
                     BaseElevation = 320.0
                 },
                 new GeoCoordinate
                 {
-                    CoordinateId = "ADM-001",
-                    Name        = "行政區 C",
-                    EastX       = 258320.0,
-                    NorthY      = 2720100.0,
+                    CoordinateId  = "ADM-001",
+                    Name          = "行政區 C",
+                    EastX         = 304000.0,   // 中心偏南 ~700 m
+                    NorthY        = 2769100.0,
                     BaseElevation = 12.0
                 }
             };
