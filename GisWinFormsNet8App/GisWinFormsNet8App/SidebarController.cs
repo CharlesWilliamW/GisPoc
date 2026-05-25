@@ -128,6 +128,50 @@ namespace GisWinFormsNet8App
 
             mapControl.Dock = DockStyle.Fill;
 
+            // --- 上方工具列（Dock=Top，需在 SplitContainer 之後加入以取得正確 z-order）---
+            var btnCompare = new Button
+            {
+                Text = "比對功能",
+                Height = 28,
+                Width = 90,
+                Font = new Font("Microsoft JhengHei", 9, FontStyle.Bold),
+                ForeColor = Color.White,
+                BackColor = Color.FromArgb(0, 112, 204),
+                FlatStyle = FlatStyle.Flat,
+                Cursor = Cursors.Hand,
+                Dock = DockStyle.Left
+            };
+            btnCompare.FlatAppearance.BorderSize = 0;
+            btnCompare.FlatAppearance.MouseOverBackColor = Color.FromArgb(28, 140, 238);
+
+            btnCompare.Click += (s, e) =>
+            {
+                if (_geoList == null || _geoList.CheckedItems.Count != 2)
+                {
+                    MessageBox.Show(
+                        "請選擇兩個設施以進行比對",
+                        "提示",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+                    return;
+                }
+                var item1 = _geoList.CheckedItems[0] as GeoCoordinate;
+                var item2 = _geoList.CheckedItems[1] as GeoCoordinate;
+                if (item1 == null || item2 == null) return;
+                using (var dlg = new CompareForm(item1, item2))
+                    dlg.ShowDialog(form);
+            };
+
+            var toolbarPanel = new Panel
+            {
+                Dock = DockStyle.Top,
+                Height = 40,
+                BackColor = Color.FromArgb(45, 45, 48),
+                Padding = new Padding(6, 6, 6, 6)
+            };
+            toolbarPanel.Controls.Add(btnCompare);
+            form.Controls.Add(toolbarPanel);
+
             form.ResumeLayout(false);
         }
     }
