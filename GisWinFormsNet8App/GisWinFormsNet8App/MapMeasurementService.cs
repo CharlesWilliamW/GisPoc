@@ -105,9 +105,12 @@ namespace GisWinFormsNet8App
             _lastClickedPoint = null;
             _measureOverlay.Markers.Clear();
             _measureOverlay.Routes.Clear();
+            _mapControl.Refresh();
+        }
 
-            _bufferOverlay.Polygons.Clear();// 清空緩衝區
-
+        public void ClearBuffer()
+        {
+            _bufferOverlay.Polygons.Clear();
             _mapControl.Refresh();
         }
 

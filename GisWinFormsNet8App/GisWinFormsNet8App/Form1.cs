@@ -20,14 +20,15 @@ namespace GisWinFormsNet8App
         {
             InitializeComponent();
 
+            _measurementService = new MapMeasurementService(gMapControl1);
+
             _sidebarController = new SidebarController();
-            _sidebarController.Initialize(this, gMapControl1, chkBufferMode, btnClearMeasure, chkMeasureMode, btnToggleDisaster, new MockGeoCoordinateService());
+            _sidebarController.Initialize(this, gMapControl1, btnClearMeasure, chkMeasureMode, btnToggleDisaster, new MockGeoCoordinateService(), _measurementService);
 
             InitializeCustomGMapSettings();
 
             _dataService = new MapDataService();
             _disasterManager = new DisasterOverlayManager(gMapControl1);
-            _measurementService = new MapMeasurementService(gMapControl1);
 
             gMapControl1.MouseDown += GMapControl1_MouseDown;
             gMapControl1.MouseUp += GMapControl1_MouseUp;
@@ -81,19 +82,10 @@ namespace GisWinFormsNet8App
 
             if (chkMeasureMode.Checked)
                 _measurementService.HandleMapClick(clickedPoint);
-
-            if (chkBufferMode.Checked)
-                _measurementService.CreateBuffer(clickedPoint, 500);
         }
         #endregion
 
         #region UI 控制項事件連動
-        private void chkBufferMode_CheckedChanged(object sender, EventArgs e)
-        {
-            _measurementService.SetBufferVisibility(chkBufferMode.Checked);
-            gMapControl1.Refresh();
-        }
-
         private async void btnToggleDisaster_CheckedChanged(object sender, EventArgs e)
         {
             if (btnToggleDisaster.Checked)

@@ -32,7 +32,6 @@
             btnToggleDisaster = new CheckBox();
             chkMeasureMode = new CheckBox();
             btnClearMeasure = new Button();
-            chkBufferMode = new CheckBox();
             SuspendLayout();
             // 
             // gMapControl1
@@ -97,25 +96,12 @@
             btnClearMeasure.Text = "清除距離量測";
             btnClearMeasure.UseVisualStyleBackColor = true;
             btnClearMeasure.Click += btnClearMeasure_Click;
-            // 
-            // chkBufferMode
-            // 
-            chkBufferMode.AutoSize = true;
-            chkBufferMode.Location = new Point(8, 139);
-            chkBufferMode.Margin = new Padding(2);
-            chkBufferMode.Name = "chkBufferMode";
-            chkBufferMode.Size = new Size(110, 19);
-            chkBufferMode.TabIndex = 6;
-            chkBufferMode.Text = "開啟緩衝區量測";
-            chkBufferMode.UseVisualStyleBackColor = true;
-            chkBufferMode.CheckedChanged += chkBufferMode_CheckedChanged;
-            // 
+            //
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(784, 411);
-            Controls.Add(chkBufferMode);
             Controls.Add(btnClearMeasure);
             Controls.Add(chkMeasureMode);
             Controls.Add(btnToggleDisaster);
@@ -133,6 +119,5 @@
         private CheckBox btnToggleDisaster;
         private CheckBox chkMeasureMode;
         private Button btnClearMeasure;
-        private CheckBox chkBufferMode;
     }
 }

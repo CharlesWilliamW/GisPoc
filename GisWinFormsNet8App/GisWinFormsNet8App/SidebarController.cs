@@ -1,6 +1,8 @@
+using GMap.NET;
 using GMap.NET.WindowsForms;
 using GisWinFormsNet8App.Models;
 using GisWinFormsNet8App.Services;
+using GisWinFormsNet8App.Utils;
 
 namespace GisWinFormsNet8App
 {
@@ -10,12 +12,17 @@ namespace GisWinFormsNet8App
         private CheckedListBox? _geoList;
         private GeoCoordinateOverlayManager? _geoOverlay;
         private readonly int _sidebarExpandedWidth = 250;
+        private MapMeasurementService? _measurementService;
+        private bool _bufferActive = false;
 
         public void Initialize(Form form, GMapControl mapControl,
-            CheckBox chkBufferMode, Button btnClearMeasure,
+            Button btnClearMeasure,
             CheckBox chkMeasureMode, CheckBox btnToggleDisaster,
-            IGeoCoordinateService geoService)
+            IGeoCoordinateService geoService,
+            MapMeasurementService measurementService)
         {
+            _measurementService = measurementService;
+
             form.SuspendLayout();
 
             // Shown 事件才套用 SplitterDistance：
@@ -61,21 +68,14 @@ namespace GisWinFormsNet8App
             btnClearMeasure.Height = 30;
             btnClearMeasure.Font = new Font("Microsoft JhengHei", 10, FontStyle.Bold);
 
-            chkBufferMode.Dock = DockStyle.Top;
-            chkBufferMode.Height = 40;
-            chkBufferMode.ForeColor = Color.White;
-            chkBufferMode.Font = new Font("Microsoft JhengHei", 10);
-            chkBufferMode.Padding = new Padding(0, 10, 0, 0);
-
             var controlPanel = new Panel
             {
                 Dock = DockStyle.Bottom,
-                Height = 165,
+                Height = 125,
                 Padding = new Padding(0, 0, 0, 10),
                 BackColor = Color.Transparent
             };
             // Dock=Top 時，最後加入的控制項排在最上方，依序往下疊
-            controlPanel.Controls.Add(chkBufferMode);
             controlPanel.Controls.Add(btnClearMeasure);
             controlPanel.Controls.Add(chkMeasureMode);
             controlPanel.Controls.Add(btnToggleDisaster);
@@ -162,6 +162,63 @@ namespace GisWinFormsNet8App
                     dlg.ShowDialog(form);
             };
 
+            var btnOpenBuffer = new Button
+            {
+                Text = "開啟緩衝區量測",
+                Height = 28,
+                Width = 110,
+                Font = new Font("Microsoft JhengHei", 9, FontStyle.Bold),
+                ForeColor = Color.White,
+                BackColor = Color.FromArgb(0, 112, 204),
+                FlatStyle = FlatStyle.Flat,
+                Cursor = Cursors.Hand,
+                Dock = DockStyle.Left
+            };
+            btnOpenBuffer.FlatAppearance.BorderSize = 0;
+            btnOpenBuffer.FlatAppearance.MouseOverBackColor = Color.FromArgb(28, 140, 238);
+
+            btnOpenBuffer.Click += (s, e) =>
+            {
+                if (_measurementService is null) return;
+
+                if (_bufferActive)
+                {
+                    _measurementService.ClearBuffer();
+                    _bufferActive = false;
+                    btnOpenBuffer.Text = "開啟緩衝區量測";
+                    return;
+                }
+
+                if (_geoList == null) return;
+                int checkedCount = _geoList.CheckedItems.Count;
+                if (checkedCount == 0)
+                {
+                    MessageBox.Show(
+                        "請勾選一個設施",
+                        "提示",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+                    return;
+                }
+                if (checkedCount >= 2)
+                {
+                    MessageBox.Show(
+                        "請只選一個設施",
+                        "提示",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+                    return;
+                }
+
+                var coord = _geoList.CheckedItems[0] as GeoCoordinate;
+                if (coord is null) return;
+
+                var (lat, lon) = Twd97Converter.ToWgs84(coord.EastX, coord.NorthY);
+                _measurementService.CreateBuffer(new PointLatLng(lat, lon), 500);
+                _bufferActive = true;
+                btnOpenBuffer.Text = "清除緩衝區";
+            };
+
             var toolbarPanel = new Panel
             {
                 Dock = DockStyle.Top,
@@ -169,6 +226,11 @@ namespace GisWinFormsNet8App
                 BackColor = Color.FromArgb(45, 45, 48),
                 Padding = new Padding(6, 6, 6, 6)
             };
+            var spacer = new Panel { Dock = DockStyle.Left, Width = 8, BackColor = Color.Transparent };
+
+            // Controls 以 Left dock 堆疊，後加入的排在右側，需先加 btnOpenBuffer 讓 btnCompare 排左
+            toolbarPanel.Controls.Add(btnOpenBuffer);
+            toolbarPanel.Controls.Add(spacer);
             toolbarPanel.Controls.Add(btnCompare);
             form.Controls.Add(toolbarPanel);
 
