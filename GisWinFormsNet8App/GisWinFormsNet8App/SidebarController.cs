@@ -132,14 +132,13 @@ namespace GisWinFormsNet8App
             var btnCompare = new Button
             {
                 Text = "比對功能",
-                Height = 28,
-                Width = 90,
                 Font = new Font("Microsoft JhengHei", 9, FontStyle.Bold),
                 ForeColor = Color.White,
                 BackColor = Color.FromArgb(0, 112, 204),
                 FlatStyle = FlatStyle.Flat,
                 Cursor = Cursors.Hand,
-                Dock = DockStyle.Left
+                AutoSize = true,
+                Padding = new Padding(8, 0, 8, 0)
             };
             btnCompare.FlatAppearance.BorderSize = 0;
             btnCompare.FlatAppearance.MouseOverBackColor = Color.FromArgb(28, 140, 238);
@@ -162,17 +161,43 @@ namespace GisWinFormsNet8App
                     dlg.ShowDialog(form);
             };
 
+            var nudBufferRadius = new NumericUpDown
+            {
+                Minimum = 1,
+                Maximum = 99999,
+                Value = 500,
+                Width = 70,
+                Height = 24,
+                Font = new Font("Microsoft JhengHei", 9),
+                BackColor = Color.FromArgb(60, 60, 63),
+                ForeColor = Color.White,
+                TextAlign = HorizontalAlignment.Center,
+                Anchor = AnchorStyles.None
+            };
+
+            var lblBufferRadius = new Label
+            {
+                Text = "半徑(m):",
+                ForeColor = Color.White,
+                BackColor = Color.FromArgb(45, 45, 48),
+                Font = new Font("Microsoft JhengHei", 9),
+                Width = 60,
+                Height = 24,
+                TextAlign = ContentAlignment.MiddleRight,
+                Anchor = AnchorStyles.None
+            };
+
             var btnOpenBuffer = new Button
             {
                 Text = "開啟緩衝區量測",
-                Height = 28,
-                Width = 110,
                 Font = new Font("Microsoft JhengHei", 9, FontStyle.Bold),
                 ForeColor = Color.White,
                 BackColor = Color.FromArgb(0, 112, 204),
                 FlatStyle = FlatStyle.Flat,
                 Cursor = Cursors.Hand,
-                Dock = DockStyle.Left
+                AutoSize = true,
+                Padding = new Padding(8, 0, 8, 0),
+                Anchor = AnchorStyles.None
             };
             btnOpenBuffer.FlatAppearance.BorderSize = 0;
             btnOpenBuffer.FlatAppearance.MouseOverBackColor = Color.FromArgb(28, 140, 238);
@@ -214,24 +239,35 @@ namespace GisWinFormsNet8App
                 if (coord is null) return;
 
                 var (lat, lon) = Twd97Converter.ToWgs84(coord.EastX, coord.NorthY);
-                _bufferService.CreateBuffer(new PointLatLng(lat, lon), 500);
+                _bufferService.CreateBuffer(new PointLatLng(lat, lon), (double)nudBufferRadius.Value);
                 _bufferActive = true;
                 btnOpenBuffer.Text = "清除緩衝區";
             };
 
-            var toolbarPanel = new Panel
+            btnCompare.Dock = DockStyle.None;
+            btnCompare.Anchor = AnchorStyles.None;
+
+            var toolbarPanel = new TableLayoutPanel
             {
                 Dock = DockStyle.Top,
                 Height = 40,
                 BackColor = Color.FromArgb(45, 45, 48),
-                Padding = new Padding(6, 6, 6, 6)
+                Padding = new Padding(6, 5, 6, 5),
+                ColumnCount = 5,
+                RowCount = 1,
+                AutoSize = false
             };
-            var spacer = new Panel { Dock = DockStyle.Left, Width = 8, BackColor = Color.Transparent };
+            toolbarPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
+            toolbarPanel.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));     // [0] btnCompare
+            toolbarPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100)); // [1] 彈性空間
+            toolbarPanel.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));     // [2] lblBufferRadius
+            toolbarPanel.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));     // [3] nudBufferRadius
+            toolbarPanel.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));     // [4] btnOpenBuffer
 
-            // Controls 以 Left dock 堆疊，後加入的排在右側，需先加 btnOpenBuffer 讓 btnCompare 排左
-            toolbarPanel.Controls.Add(btnOpenBuffer);
-            toolbarPanel.Controls.Add(spacer);
-            toolbarPanel.Controls.Add(btnCompare);
+            toolbarPanel.Controls.Add(btnCompare, 0, 0);
+            toolbarPanel.Controls.Add(lblBufferRadius, 2, 0);
+            toolbarPanel.Controls.Add(nudBufferRadius, 3, 0);
+            toolbarPanel.Controls.Add(btnOpenBuffer, 4, 0);
             form.Controls.Add(toolbarPanel);
 
             form.ResumeLayout(false);
