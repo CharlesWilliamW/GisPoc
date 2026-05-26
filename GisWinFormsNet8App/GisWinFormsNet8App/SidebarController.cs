@@ -12,16 +12,16 @@ namespace GisWinFormsNet8App
         private CheckedListBox? _geoList;
         private GeoCoordinateOverlayManager? _geoOverlay;
         private readonly int _sidebarExpandedWidth = 250;
-        private MapMeasurementService? _measurementService;
+        private BufferService? _bufferService;
         private bool _bufferActive = false;
 
         public void Initialize(Form form, GMapControl mapControl,
             Button btnClearMeasure,
             CheckBox chkMeasureMode, CheckBox btnToggleDisaster,
             IGeoCoordinateService geoService,
-            MapMeasurementService measurementService)
+            BufferService bufferService)
         {
-            _measurementService = measurementService;
+            _bufferService = bufferService;
 
             form.SuspendLayout();
 
@@ -179,11 +179,11 @@ namespace GisWinFormsNet8App
 
             btnOpenBuffer.Click += (s, e) =>
             {
-                if (_measurementService is null) return;
+                if (_bufferService is null) return;
 
                 if (_bufferActive)
                 {
-                    _measurementService.ClearBuffer();
+                    _bufferService.ClearBuffer();
                     _bufferActive = false;
                     btnOpenBuffer.Text = "開啟緩衝區量測";
                     return;
@@ -214,7 +214,7 @@ namespace GisWinFormsNet8App
                 if (coord is null) return;
 
                 var (lat, lon) = Twd97Converter.ToWgs84(coord.EastX, coord.NorthY);
-                _measurementService.CreateBuffer(new PointLatLng(lat, lon), 500);
+                _bufferService.CreateBuffer(new PointLatLng(lat, lon), 500);
                 _bufferActive = true;
                 btnOpenBuffer.Text = "清除緩衝區";
             };

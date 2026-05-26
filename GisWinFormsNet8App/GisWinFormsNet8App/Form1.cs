@@ -9,6 +9,7 @@ namespace GisWinFormsNet8App
         private readonly MapDataService _dataService;
         private readonly DisasterOverlayManager _disasterManager;
         private readonly MapMeasurementService _measurementService;
+        private readonly BufferService _bufferService;
         private readonly SidebarController _sidebarController;
 
         // 解決滑鼠左鍵「拖曳地圖」與「點擊設點」衝突的關鍵變數
@@ -21,9 +22,10 @@ namespace GisWinFormsNet8App
             InitializeComponent();
 
             _measurementService = new MapMeasurementService(gMapControl1);
+            _bufferService = new BufferService(gMapControl1);
 
             _sidebarController = new SidebarController();
-            _sidebarController.Initialize(this, gMapControl1, btnClearMeasure, chkMeasureMode, btnToggleDisaster, new MockGeoCoordinateService(), _measurementService);
+            _sidebarController.Initialize(this, gMapControl1, btnClearMeasure, chkMeasureMode, btnToggleDisaster, new MockGeoCoordinateService(), _bufferService);
 
             InitializeCustomGMapSettings();
 
