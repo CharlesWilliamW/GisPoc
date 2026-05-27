@@ -1,71 +1,225 @@
 # Highly Extensible GIS Architecture Proof-of-Concept (PoC)
+
 ### WinForms .NET 8 | GMap.NET | Spatial Geometry | Service-Oriented Architecture
 
-A high-performance, modular Desktop GIS application built with **WinForms (.NET 8)** and **GMap.NET**. This repository demonstrates how to bridge complex spatial mathematics (geodesic math) with highly decoupled software architecture principles, eliminating common WinForms anti-patterns such as bloated code-behind (`Form1.cs`) and UI/Input event state conflicts.
+A modular desktop GIS application built with **WinForms (.NET 8)** and **GMap.NET**, demonstrating scalable geospatial architecture, geodesic spatial computation, and maintainable desktop engineering practices.
+
+This project explores how to combine:
+
+* GIS visualization
+* Spatial mathematics
+* Service-Oriented Architecture (SOA)
+* Event-driven UI systems
+* Decoupled desktop application engineering
+
+while avoiding common WinForms maintainability issues such as monolithic `Form1.cs` implementations and tightly coupled rendering logic.
 
 ---
 
-## 🚀 Key Features & Highlights
+# 📸 Screenshots
 
-- **Decoupled Architecture**: Transitioned from standard monolithic WinForms event handlers to a clean **Service-Oriented Architecture (SOA)**.
-- **Geodesic Distance Measurement**: Real-time point-to-point calculation utilizing the **Haversine Formula** for perfect curved earth surface approximations.
-- **Dynamic Buffer Analysis Polygon**: Geodesic buffer circle creation (radius mapping) mapped around map nodes.
-- **State-Isolated UI & Gesture Handling**: Resolved overlapping mouse input states between map dragging (pan) and vertex placing (click) through a dynamic **Event Interception** system.
-- **Adaptive Sidebar Layout**: Dynamic layout and panel hierarchy resizing built natively via code-behind, ensuring visual scalability without relying on Visual Studio's fragile Form Designer serialization.
+## Disaster Warning Pins
 
----
+![Disaster Warning Pins](docs/images/disaster-warning-pins.png)
 
-## 🛠️ Software Engineering & Architecture
+## Distance Measurement
 
-### 1. Eliminating Bloated Code-Behind (`Form1.cs`)
-Standard WinForms applications often bundle API calls, business logic, and geometry rendering within `Form1.cs`. This PoC implements a strict **Separation of Concerns (SoC)** by spinning up specialized services:
-- `MapDataService`: Manages data models (`DisasterPoint`) and asynchronous Mock API requests, ready for integration with official government real-time APIs (e.g., NCDR).
-- `DisasterOverlayManager`: Exclusively dictates map markers/pins toggle, lifecycle, and rendering pipelines.
-- `MapMeasurementService`: Holds pure geometry logic, coordinate computations, and line/polygon overlay draw operations.
+![Distance Measurement](docs/images/measurement.png)
 
-### 2. Solving Input Conflict via Event Interception
-In professional GIS platforms, **Left-Click & Drag** must seamlessly coexist with **Left-Click to Draw**. Standard WinForms control bindings crash or misfire due to ambiguous mouse states. 
-By overriding `MouseDown` and `Up` deltas, this architecture establishes an execution barrier:
-- Panning remains natively available via the Left Mouse Button.
-- Measuring state hooks into the mouse pipeline safely, ensuring no input is swallowed and zero compilation errors occur from conflicting designer behaviors.
+## Facility List
+
+![Facility List](docs/images/facility-list.png)
+
+## Facility Compare
+
+![Facility Compare](docs/images/facility-compare.png)
 
 ---
 
-## 📐 Mathematical & Spatial Mechanics
+# 🚀 Key Features & Highlights
 
-Rather than leveraging external bulky geospatial engines, the geometry processing in this project runs via pure math optimization—leveraging background knowledge derived from low-level game engine and collision pipeline architecture.
+* **Decoupled Architecture**
+  Transitioned from monolithic WinForms event handling into a clean Service-Oriented Architecture.
 
-### Great-Circle Distance (Haversine Formula)
-To measure true geographical distance across the Earth's curved surface (WGS84 ellipsoid model), the system implements the Haversine formula instead of flat Cartesian Euclidean math:
+* **Geodesic Distance Measurement**
+  Real-time point-to-point geographical measurement using the Haversine Formula.
+
+* **Dynamic Buffer Analysis Polygon**
+  Geodesic buffer circle generation around map nodes using localized spatial projection logic.
+
+* **State-Isolated UI & Gesture Handling**
+  Eliminates mouse interaction conflicts between map dragging and geometry drawing.
+
+* **Adaptive Sidebar Layout**
+  Runtime-generated layout management without fragile Visual Studio Designer dependencies.
+
+---
+
+# 🧰 Technologies
+
+* C#
+* .NET 8
+* WinForms
+* GMap.NET
+* GIS / Geospatial Systems
+* Spatial Geometry
+* Haversine Formula
+* Service-Oriented Architecture (SOA)
+* Desktop Application Engineering
+
+---
+
+# ⚡ Quick Start
+
+## Requirements
+
+* Windows 10 / 11
+* .NET 8 SDK
+* Visual Studio 2022 or VS Code
+
+---
+
+## Clone Repository
+
+```bash
+git clone https://github.com/CharlesWilliamW/GisPoc.git
+cd GisPoc
+```
+
+---
+
+## Open with Visual Studio 2022
+
+1. Open `GisWinFormsNet8App.sln`
+2. Restore NuGet packages automatically
+3. Set the startup project if necessary
+4. Press `F5` to run
+
+---
+
+## Open with VS Code
+
+### Recommended Extensions
+
+* C# Dev Kit
+* .NET Install Tool
+* NuGet Package Manager
+
+### Restore Packages
+
+```bash
+dotnet restore
+```
+
+### Build Project
+
+```bash
+dotnet build
+```
+
+### Run Project
+
+```bash
+dotnet run
+```
+
+---
+
+# 🏗️ Software Engineering & Architecture
+
+## Separation of Concerns (SoC)
+
+Traditional WinForms applications often accumulate business logic, rendering code, and API communication inside `Form1.cs`.
+
+This project minimizes code-behind coupling by isolating rendering, geometry, and data workflows into dedicated services.
+
+### Core Services
+
+* `MapDataService`
+  Handles data models and asynchronous API communication.
+
+* `DisasterOverlayManager`
+  Controls marker lifecycle, overlays, and map rendering behavior.
+
+* `MapMeasurementService`
+  Encapsulates geometry calculations and measurement rendering logic.
+
+---
+
+## Input Conflict Resolution via Event Interception
+
+Professional GIS systems require smooth coexistence between:
+
+* Left-click drawing
+* Left-click dragging (map pan)
+
+This project resolves overlapping mouse state conflicts through a lightweight event interception strategy, ensuring reliable interaction handling without Designer-generated event corruption.
+
+---
+
+# 📐 Mathematical & Spatial Mechanics
+
+The geometry system intentionally focuses on lightweight computational approaches instead of depending on heavyweight GIS engines, enabling architectural clarity and fine-grained control over spatial behavior.
+
+---
+
+## Great-Circle Distance (Haversine Formula)
+
+To measure true geographical distance across Earth's curved surface, the project implements the Haversine Formula instead of flat Cartesian approximation.
 
 $$\Delta lat = lat_2 - lat_1$$
+
 $$\Delta lon = lon_2 - lon_1$$
+
 $$a = \sin^2\left(\frac{\Delta lat}{2}\right) + \cos(lat_1) \cdot \cos(lat_2) \cdot \sin^2\left(\frac{\Delta lon}{2}\right)$$
+
 $$c = 2 \cdot \text{atan2}\left(\sqrt{a}, \sqrt{1-a}\right)$$
+
 $$d = R \cdot c$$
 
-*(Where $R$ is Earth's mean radius $\approx 6,371,000$ meters)*
+Where:
 
-### Geodesic Buffer Analysis (Circle Projection)
-Generating a 1,000-meter buffer zone on a Mercator projection without stretching distortion requires computing a polygon with localized trigonometric offsets. The system generates 36 precise vertices on the ellipsoidal sphere before handing the projection sequence to the GPU viewport overlay:
+* (R) = Earth's mean radius (~6,371,000 meters)
+
+---
+
+## Geodesic Buffer Analysis
+
+To generate accurate circular buffer zones on Mercator projection maps, the project computes localized spherical coordinate offsets before rendering polygon overlays.
 
 $$\Delta Lat = \frac{\text{Radius}}{6,371,000} \times \frac{180}{\pi}$$
+
 $$\Delta Lng = \frac{\text{Radius}}{6,371,000 \times \cos\left(Lat_{\text{center}} \times \frac{\pi}{180}\right)} \times \frac{180}{\pi}$$
 
 ---
 
-## 📂 Project Structure
+# 📂 Project Structure
 
 ```text
 GisWinFormsNet8App/
 │
 ├── Services/
-│   ├── MapDataService.cs          # API communication & Mock data generation
-│   ├── MapMeasurementService.cs   # Core spatial geometry & math logic
-│   └── DisasterOverlayManager.cs  # Map Marker layout & Layer control
+│   ├── MapDataService.cs
+│   ├── MapMeasurementService.cs
+│   └── DisasterOverlayManager.cs
 │
 ├── Models/
-│   └── DisasterPoint.cs           # Pure structural data entity
+│   └── DisasterPoint.cs
 │
-├── Form1.cs                       # UI Shell (Pure View Router, completely lightweight)
-└── Program.cs                     # Application Entry Point
+├── Form1.cs
+└── Program.cs
+```
+
+---
+
+# 🚧 Future Improvements
+
+* Real-time government API integration
+* Layer grouping & filtering
+* Offline tile caching
+
+---
+
+# 📄 License
+
+MIT License
