@@ -250,12 +250,12 @@ namespace GisWinFormsNet8App
             var toolbarPanel = new TableLayoutPanel
             {
                 Dock = DockStyle.Top,
-                Height = 40,
+                AutoSize = true,
+                AutoSizeMode = AutoSizeMode.GrowAndShrink,
                 BackColor = Color.FromArgb(45, 45, 48),
                 Padding = new Padding(6, 5, 6, 5),
                 ColumnCount = 5,
-                RowCount = 1,
-                AutoSize = false
+                RowCount = 1
             };
             toolbarPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
             toolbarPanel.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));     // [0] btnCompare
